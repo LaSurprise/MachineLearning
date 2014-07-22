@@ -1,0 +1,144 @@
+Human Activity Recognition
+==========================
+
+## Synopsis
+
+The goal of this project is to build a model that can be used to predict how some persons asked to perform barbell lifts did the exercise. We will also use the model to predict 20 different test cases.    
+The data used here is collected from accelerometers on the belt, forearm, arm, and dumbell.   
+The data comes from this source : [http://groupware.les.inf.puc-rio.br/har](http://groupware.les.inf.puc-rio.br/har) and was downloaded from Coursera website.    
+
+## Data   
+The training dataset [Training](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv) is a set of 160 variables and 19622 observations.        
+        - The seven first variables describe the context on the exercice : monitoring features    
+        - The last one, named classe, is the outcome we will try to predict.  
+        - The other variables are used as predictors.    
+The test dataset [Testing](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv) has a similar pattern, but his last variable is a problem_id.   
+
+  
+## Loading and processing data
+
+###1 - Set work directory and read CSV data.
+
+```{r}
+setwd("C:/Users/Lydienne/MachineLearning/Project/")
+pml.training <- read.csv("pml-training.csv")
+pml.testing <- read.csv("pml-testing.csv")
+```
+
+###2 - Select outcome and predictor variables
+```{r echo = T}
+training <- pml.training [, -c(1,2,3,4,5,6,7)]
+testing <- pml.testing [, -c(1,2,3,4,5,6,7)]
+```
+     
+###3 - Check training and testing data
+
+```{r}
+str(training)
+str(testing)
+```
+* result : 153 variables (one outcome and 152 predictors)
+* training data : some variables are "Factor" instead of "Num", we need to transform them so that they may be used in a proper way.    
+* testing data : some variables are "logical" instead of "Num", a transformation is needed too.
+
+###4 - Transform training and testing data
+
+```{r echo = T, warning=FALSE, cache.comments=FALSE, message=FALSE, error=TRUE}
+for (i in 1:152) if(class(training[,i])=="factor") training[,i] <- as.numeric(as.character(training[,i]))
+for (i in 1:152) if(class(testing[,i])=="logical") testing[,i] <- as.numeric(as.character(testing[,i]))
+```
+
+###5 - Preprocessing and Prinicpal Components
+####5.1 Remove outcome variable and determine PC
+```{r echo = T, warning=FALSE, error=TRUE, message=FALSE}
+library("caret")
+trainData1 <- training[,-153]
+summary(prcomp(trainData1, scale = TRUE))
+```
+
+####5.2 Variables with mean equal to NA
+
+```{r echo = T}
+means <- colMeans(trainData1, na.rm = TRUE)
+which(is.na(means[]) )
+```
+
+####5.3 Conclusion
+Preprocessing is not possible because we have missing value in some variables.   
+So we are going to build model without preprocessing
+
+###6 - Building Model
+
+####6.1 Remove variables with NA values
+
+```{r}
+trainData <- training[,-153]
+means <- colMeans(trainData, na.rm = TRUE)
+trainData <- data.frame(cbind(trainData[,which(!is.na(means[]))], classe=training$classe))
+
+testData <- testing[,-153]
+testData <- testData[,which(!is.na(means[]))]
+```
+
+####6.2 Apply RPART with CARET package and plot result
+```{r echo=T, warning=FALSE, error=FALSE, message=FALSE}
+library("rattle")
+set.seed(1)
+CART <- train(classe ~ . ,method="rpart",data=trainData)
+print("Classification And Regression Tree Summary")
+CART
+##print(CART$finalModel)
+fancyRpartPlot(CART$finalModel)
+```
+
+####6.3 Apply RPART with TREE package and plot result
+```{r echo=T, warning=FALSE, error=FALSE, message=FALSE}
+library("tree")
+set.seed(2)
+Tree1 <- tree(classe ~ . ,method="rpart",data=trainData)
+summary(Tree1)
+print(Tree1)
+plot(Tree1, main="Classification Tree")
+text(Tree1, all=TRUE, cex=.8)
+```
+
+####6.4 Apply NB (Naive Bayes) with CARET package
+```{r echo=T, warning=FALSE, error=FALSE, message=FALSE}
+set.seed(3)
+NB <- train(classe ~ . ,method="nb",data=trainData)
+NB
+```
+
+
+###7 - Prediction
+####7.1 Prediction with CART
+```{r echo=T, warning=FALSE, error=FALSE}
+predict(CART,testData)
+```
+
+
+####7.3 Prediction with TREE1
+
+```{r echo=T, warning=FALSE, error=FALSE}
+predict(Tree1,testData)
+
+```
+
+####7.3 Conclusion
+Test data prediction is not possible with CART.   
+TREE gives prediction with very low weight.   
+NB is still challenging ....     
+So, we can conclude that test data is merely not predictible with these models.        
+In fact training and testing data do not have the same shape as we can see with this plot.    
+Similarity would produced plots arround the red line.   
+Test data is probably a set of outliers.  
+
+```{r echo=FALSE, warning=FALSE}
+trainData <- training[,-153]
+testData <- testing[,-153]
+trainmeans <- colMeans(trainData, na.rm = TRUE)
+testmeans <- colMeans(testData, na.rm = TRUE)
+delta <- trainmeans - testmeans
+plot(log10(delta),xlab="Predictor index", pch=19, main="Delta = Training Mean - Testing Mean")
+abline(h=0, col="red")
+```
