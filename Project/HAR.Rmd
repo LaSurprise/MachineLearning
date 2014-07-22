@@ -20,7 +20,7 @@ The test dataset [Testing](https://d396qusza40orc.cloudfront.net/predmachlearn/p
 ###1 - Set work directory and read CSV data.
 
 ```{r}
-setwd("C:/Users/Lydienne/MachineLearning/Project/")
+#setwd("C:/Users/Lydienne/MachineLearning/Project/") 
 pml.training <- read.csv("pml-training.csv")
 pml.testing <- read.csv("pml-testing.csv")
 ```
