@@ -22,10 +22,10 @@ We tried to build three models :
 A prediction was done with TREE, but associated weights were too low.   
 With CARET/RPART, this was not possible.      
 With CARET/NB, it is still a challenge.     
-
+Test data seems to be a set of outliers.
 
 ## Evaluation
 
-1. Fork this repo on your computer : a directory named MachineLearning will be created with all files used in this project       
-2. Set Working Directory with a proper path in RStudio : setwd("C:/Users/YourPrompt/MachineLearning/Project/")        
-2. Open an run HAR.Rmd with RStudio         
+1. Fork this repo on your computer : a directory named MachineLearning will be created with all files used in this project.       
+2. Set Working Directory with a proper path in HAR.Rmd with RStudio: setwd("C:/Users/YourPrompt/MachineLearning/Project/").        
+2. Run HAR.Rmd with Knit.        
