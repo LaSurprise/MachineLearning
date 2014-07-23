@@ -91,6 +91,16 @@ CART
 fancyRpartPlot(CART$finalModel)
 ```
 
+####6.3 Apply RPART with TREE package and plot result
+```{r echo=T, warning=FALSE, error=FALSE, message=FALSE}
+library("tree")
+set.seed(2)
+Tree1 <- tree(classe ~ . ,method="rpart",data=trainData)
+plot(Tree1)
+text(Tree1, all=TRUE, cex=.6)
+```
+
+
 ###7 - Prediction
 
 ```{r echo=T, warning=FALSE, error=FALSE}
