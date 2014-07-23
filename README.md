@@ -14,15 +14,14 @@ In order to get suitable data for modeling, some transformations have been made 
 
 ## Building Model
 
-We tried to build three models : 
-* Two with CARET package using RPART and NB.
+We tried to build two models : 
+* One with CARET package using RPART.
 * One with TREE package using RPART.
 
 ## Prediction
-A prediction was done with TREE, but associated weights were too low.   
-With CARET/RPART, this was not possible.      
-With CARET/NB, it is still a challenge.     
-Test data seems to be a set of outliers.    
+
+Prediction have been done with model from CARET package and written in text files.       
+    
 
 ## Evaluation
 
