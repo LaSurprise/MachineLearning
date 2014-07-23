@@ -20,7 +20,7 @@ The test dataset [Testing](https://d396qusza40orc.cloudfront.net/predmachlearn/p
 ###1 - Set work directory and read CSV data.
 
 ```{r}
-#setwd("C:/Users/Lydienne/MachineLearning/Project/") 
+setwd("C:/Users/Lydienne/MachineLearning/Project/")
 pml.training <- read.csv("pml-training.csv")
 pml.testing <- read.csv("pml-testing.csv")
 ```
@@ -73,11 +73,11 @@ So we are going to build model without preprocessing
 
 ```{r}
 trainData <- training[,-153]
-means <- colMeans(trainData, na.rm = TRUE)
+testData <- testing[,-153]
+means <- colMeans(testData, na.rm = TRUE)
+testData <- testData[,which(!is.na(means[]))]
 trainData <- data.frame(cbind(trainData[,which(!is.na(means[]))], classe=training$classe))
 
-testData <- testing[,-153]
-testData <- testData[,which(!is.na(means[]))]
 ```
 
 ####6.2 Apply RPART with CARET package and plot result
@@ -91,54 +91,11 @@ CART
 fancyRpartPlot(CART$finalModel)
 ```
 
-####6.3 Apply RPART with TREE package and plot result
-```{r echo=T, warning=FALSE, error=FALSE, message=FALSE}
-library("tree")
-set.seed(2)
-Tree1 <- tree(classe ~ . ,method="rpart",data=trainData)
-summary(Tree1)
-print(Tree1)
-plot(Tree1, main="Classification Tree")
-text(Tree1, all=TRUE, cex=.8)
-```
-
-####6.4 Apply NB (Naive Bayes) with CARET package
-```{r echo=T, warning=FALSE, error=FALSE, message=FALSE}
-set.seed(3)
-NB <- train(classe ~ . ,method="nb",data=trainData)
-NB
-```
-
-
 ###7 - Prediction
-####7.1 Prediction with CART
-```{r echo=T, warning=FALSE, error=FALSE}
-predict(CART,testData)
-```
-
-
-####7.3 Prediction with TREE1
 
 ```{r echo=T, warning=FALSE, error=FALSE}
-predict(Tree1,testData)
-
+answers <- predict(CART,testData)
+source("pml_write_files.R")
+pml_write_files(answers)
 ```
 
-####7.3 Conclusion
-Test data prediction is not possible with CART.   
-TREE gives prediction with very low weight.   
-NB is still challenging ....     
-So, we can conclude that test data is merely not predictible with these models.        
-In fact training and testing data do not have the same shape as we can see with this plot.    
-Similarity would produced plots arround the red line.   
-Test data is probably a set of outliers.  
-
-```{r echo=FALSE, warning=FALSE}
-trainData <- training[,-153]
-testData <- testing[,-153]
-trainmeans <- colMeans(trainData, na.rm = TRUE)
-testmeans <- colMeans(testData, na.rm = TRUE)
-delta <- trainmeans - testmeans
-plot(log10(delta),xlab="Predictor index", pch=19, main="Delta = Training Mean - Testing Mean")
-abline(h=0, col="red")
-```
