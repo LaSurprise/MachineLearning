@@ -22,7 +22,7 @@ We tried to build three models :
 A prediction was done with TREE, but associated weights were too low.   
 With CARET/RPART, this was not possible.      
 With CARET/NB, it is still a challenge.     
-Test data seems to be a set of outliers.
+Test data seems to be a set of outliers.    
 
 ## Evaluation
 
