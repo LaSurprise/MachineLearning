@@ -25,5 +25,5 @@ Prediction have been done with model from CARET package and written in text file
 
 ## Evaluation
 
-1. Fork this repo on your computer : a directory named MachineLearning will be created with all files used in this project.       
-2. Set Working Directory with a proper path in HAR.Rmd with RStudio: setwd("C:/Users/YourPrompt/MachineLearning/Project/").
+1. Fork and clone this repo on your computer : a directory named MachineLearning will be created with all files used in this project.       
+2. Visualize this file : "../MachineLearning/Project/HAR.html").

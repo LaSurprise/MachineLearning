@@ -105,6 +105,7 @@ text(Tree1, all=TRUE, cex=.6)
 
 ```{r echo=T, warning=FALSE, error=FALSE}
 answers <- predict(CART,testData)
+answers
 source("pml_write_files.R")
 pml_write_files(answers)
 ```
